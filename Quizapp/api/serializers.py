@@ -25,13 +25,13 @@ class TeacherSignupSerializer(serializers.ModelSerializer):
         password=self.validated_data['password']
         password2=self.validated_data['password2']
         if password != password2:
-            raise serializers.ValidationError({"error": "password do not match"})
+            raise serializers.ValidationError({"error": "passwords do not match"})
 
         user.set_password(password)
         user.is_teacher=True
         user.save()
-
-        return super().save(**kwargs)
+        Teacher.objects.create(user=user)
+        return user
 
 class StudentSignupSerializer(serializers.ModelSerializer):
     password2=serializers.CharField(style={"input_type": "password"}, write_only=True)
@@ -42,3 +42,19 @@ class StudentSignupSerializer(serializers.ModelSerializer):
         extra_kwargs={
             'password':{'write_only': True}
         }
+
+    def save(self, **kwargs):
+        user=User(
+            username=self.validated_data['username'],
+            email=self.validated_data['email']
+        )
+        password=self.validated_data['password']
+        password2=self.validated_data['password2']
+        if password != password2:
+            raise serializers.ValidationError({"error": "passwords do not match"})
+
+        user.set_password(password)
+        user.is_student=True
+        user.save()
+        Student.objects.create(user=user)
+        return user
