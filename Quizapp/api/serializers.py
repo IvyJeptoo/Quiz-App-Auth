@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Quizapp.models import User, Teacher, Student
+from Quizapp.models import *
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,11 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeacherSignupSerializer(serializers.ModelSerializer):
-    password2=serializers.CharField(style={"input_type": "password"}, write_only=True)
+    confirmPassword=serializers.CharField(style={"input_type": "password"}, write_only=True)
     
     class Meta:
         model=User
-        fields=["username","email","password","password2"]
+        fields=["username","email","password","confirmPassword"]
         extra_kwargs={
             'password':{'write_only': True}
         }
@@ -23,8 +23,8 @@ class TeacherSignupSerializer(serializers.ModelSerializer):
             email=self.validated_data['email']
         )
         password=self.validated_data['password']
-        password2=self.validated_data['password2']
-        if password != password2:
+        confirmPassword=self.validated_data['confirmPassword']
+        if password != confirmPassword:
             raise serializers.ValidationError({"error": "passwords do not match"})
 
         user.set_password(password)
@@ -32,13 +32,24 @@ class TeacherSignupSerializer(serializers.ModelSerializer):
         user.save()
         Teacher.objects.create(user=user)
         return user
+    
+class ProfileSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Profile
+            fields = ['bio', 'avatar']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Category
+            fields = '__all__'
 
 class StudentSignupSerializer(serializers.ModelSerializer):
-    password2=serializers.CharField(style={"input_type": "password"}, write_only=True)
+    confirmPassword=serializers.CharField(style={"input_type": "password"}, write_only=True)
     
     class Meta:
         model=User
-        fields=["username","email","password","password2"]
+        fields=["username","email","password","confirmPassword"]
         extra_kwargs={
             'password':{'write_only': True}
         }
@@ -49,8 +60,8 @@ class StudentSignupSerializer(serializers.ModelSerializer):
             email=self.validated_data['email']
         )
         password=self.validated_data['password']
-        password2=self.validated_data['password2']
-        if password != password2:
+        confirmPassword=self.validated_data['confirmPassword']
+        if password != confirmPassword:
             raise serializers.ValidationError({"error": "passwords do not match"})
 
         user.set_password(password)
@@ -58,3 +69,6 @@ class StudentSignupSerializer(serializers.ModelSerializer):
         user.save()
         Student.objects.create(user=user)
         return user
+    
+
+    
