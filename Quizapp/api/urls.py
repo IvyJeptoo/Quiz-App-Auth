@@ -1,12 +1,14 @@
 from django.urls import path
-from .views import TeacherSignupView, StudentSignupView,CustomAuthToken, LogoutView, TeacherOnlyView, StudentOnlyView
+from .views import *
 
 
 urlpatterns=[
-    path('signup/teacher/', TeacherSignupView.as_view()),
-    path('signup/student/', StudentSignupView.as_view()),
+    path('sign-up/teacher/', TeacherSignupView.as_view()),
+    path('sign-up/student/', StudentSignupView.as_view()),
     path('login/',CustomAuthToken.as_view(), name='auth-token'),
     path('logout/', LogoutView.as_view(), name='logout-view'),
+    # path('profile/', ProfileView.as_view(), name='profile'),
+    path('categories/', category_list, name='category-list'),
     path('teacher/dashboard/', TeacherOnlyView.as_view(), name='teacher-dashboard' ),
     path('student/dashboard/', StudentOnlyView.as_view(), name='student-dashboard')
 
