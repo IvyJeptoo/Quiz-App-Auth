@@ -5,6 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from .permissions import IsStudentUser, IsTeacherUser
+from django.shortcuts import render, get_object_or_404
+from ..models import Profile
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
 
 
 class TeacherSignupView(generics.GenericAPIView):
@@ -40,7 +44,8 @@ class CustomAuthToken(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id':user.pk,
-            'is_student':user.is_student
+            'is_student':user.is_student,
+            'username':user.username
 
         })
 
@@ -63,6 +68,29 @@ class TeacherOnlyView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+# class ProfileView(APIView):
+#     def get(self, request,*args*kwargs):
+#         user = request.user
+#         profile = get_object_or_404(get_user_model(), username=user.username).profile
+#         serializer = ProfileSerializer(profile)
+
+#         return Response(serializer.data)
+
+# class CategoryListView(APIView):
+#     def get(self, request):
+#         categories = Category.objects.all
+#         serializer = CategorySerializer(categories, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+@api_view(['POST'])
+def category_list(request):
+    serializer = CategorySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
