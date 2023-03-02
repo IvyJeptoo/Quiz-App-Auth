@@ -83,13 +83,15 @@ class TeacherOnlyView(generics.RetrieveAPIView):
 #         serializer = CategorySerializer(categories, many=True)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
     
-@api_view(['POST'])
-def category_list(request):
-    serializer = CategorySerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CategoryListCreateView(generics.ListCreateAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [IsTeacherUser]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 
 
 
