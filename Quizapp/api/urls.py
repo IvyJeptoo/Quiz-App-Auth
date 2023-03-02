@@ -8,7 +8,7 @@ urlpatterns=[
     path('login/',CustomAuthToken.as_view(), name='auth-token'),
     path('logout/', LogoutView.as_view(), name='logout-view'),
     # path('profile/', ProfileView.as_view(), name='profile'),
-    path('categories/', category_list, name='category-list'),
+    path('categories/', CategoryListCreateView.as_view(), name='category-list_create'),
     path('teacher/dashboard/', TeacherOnlyView.as_view(), name='teacher-dashboard' ),
     path('student/dashboard/', StudentOnlyView.as_view(), name='student-dashboard')
 
